@@ -125,9 +125,9 @@ class SQLiteHandle:
             cursor = conn.cursor()
 
             query = '''
-            SELECT ci.img_src, cp.series_name
+            SELECT ci.img_src, sc.series_name
             FROM cards_info ci
-            JOIN series_cardlist cp ON ci.series_id = cp.series_id
+            JOIN series_cardlist sc ON ci.series_id = sc.series_id
             '''
 
             cursor.execute(query)

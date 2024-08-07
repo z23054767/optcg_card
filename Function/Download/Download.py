@@ -13,9 +13,9 @@ class ImageDownload:
             Args:
             script_directory (str): 腳本目錄的路徑
         """ 
-        self._script_directory = script_directory
+        self._script_directory : str = script_directory
         """ 腳本目錄的路徑 """
-        self._logger = Logger(script_directory)
+        self._logger : Logger = Logger(script_directory)
         """ 日誌記錄器 """
 
         

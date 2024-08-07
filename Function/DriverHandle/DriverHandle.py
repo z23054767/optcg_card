@@ -19,11 +19,11 @@ class DriverHandle:
             Args:
             script_directory (str): 腳本目錄的路徑
         """
-        self._logger = Logger(script_directory)
+        self._logger : Logger = Logger(script_directory)
         """ 日誌記錄器 """
-        self._dbHandle = SQLiteHandle(script_directory)
+        self._dbHandle : SQLiteHandle = SQLiteHandle(script_directory)
         """ DB存取類別 """
-        self._common = CommonHandle()
+        self._common : CommonHandle = CommonHandle()
         """ 通用方法類別 """
 
     def cookie_suggestion_close(self, driver) -> None:
