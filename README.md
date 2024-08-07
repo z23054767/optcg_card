@@ -40,25 +40,25 @@
 2. 根據提示輸入需要抓取的卡片網站地址及相關參數，程序將自動進行抓取並保存資料。
 
 ## 文件結構
-optcg_card
+optcg_card  
+│  
+├── Function/  
+│ ├── Common/  
+│ │ └── Common.py  
+│ ├── DB/  
+│ │ └── DB.py  
+│ ├── Download/  
+│ │ └── Download.py  
+│ ├── DriverHandle/  
+│ │ └── DriverHandle.py  
+│ ├── Log/  
+│ │ └── Log.py  
+│ └── init.py  
 │
-├── Function/
-│ ├── Common/
-│ │ └── Common.py
-│ ├── DB/
-│ │ └── DB.py
-│ ├── Download/
-│ │ └── Download.py
-│ ├── DriverHandle/
-│ │ └── DriverHandle.py
-│ ├── Log/
-│ │ └── Log.py
-│ └── init.py
-│
-├── .gitignore
-├── main.py
-├── README.md
-└── requirements.txt
+├── .gitignore  
+├── main.py  
+├── README.md  
+└── requirements.txt  
 
 ## 聯繫我們
 
