@@ -60,6 +60,22 @@ optcg_card
 ├── README.md  
 └── requirements.txt  
 
+## 打包為可執行文件
+
+您可以使用 `PyInstaller` 將此項目打包為一個可在任何環境下運行的可執行文件。
+
+1. 安裝 `PyInstaller`：
+    ```bash
+    pip install pyinstaller
+    ```
+
+2. 打包項目：
+    ```bash
+    pyinstaller --onefile main.py
+    ```
+
+這將在 `dist` 目錄下生成一個名為 `main.exe` 的可執行文件。
+
 ## 聯繫我們
 
 如果您有任何疑問或需要進一步的幫助，請隨時通過以下方式與我們聯繫：

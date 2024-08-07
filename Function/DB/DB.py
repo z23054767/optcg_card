@@ -31,7 +31,6 @@ class SQLiteHandle:
         if not os.path.exists(db_dir):
             os.makedirs(db_dir)
 
-    # 將錯誤消息寫入日誌文件
     def save_cardInfo(self, series_cardlist_datas : dict) -> None:
         """
             將卡片系列名稱及ID存入資料庫
