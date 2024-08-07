@@ -6,11 +6,11 @@ from Function.Log.Log import Logger
 
 
 # 初始化設定
-_script_directory = os.path.dirname(os.path.abspath(__file__))
-_driverhandle = DriverHandle(_script_directory)
-_dbHandle = SQLiteHandle(_script_directory)
-_download = ImageDownload(_script_directory)
-_logger = Logger(_script_directory)
+_script_directory : str = os.path.dirname(os.path.abspath(__file__))
+_driverhandle : DriverHandle  = DriverHandle(_script_directory)
+_dbHandle : SQLiteHandle = SQLiteHandle(_script_directory)
+_download : ImageDownload = ImageDownload(_script_directory)
+_logger : Logger = Logger(_script_directory)
 
 
 
