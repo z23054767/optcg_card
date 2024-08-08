@@ -69,10 +69,17 @@ optcg_card
 
 2. 打包項目：
     ```bash
-    pyinstaller --onefile main.py
+    pyinstaller --onefile --windowed --icon=optcg_card.ico --name=optcg_card --distpath D:/ main.py
     ```
+    這個命令的含義如下：
 
-這將在 `dist` 目錄下生成一個名為 `main.exe` 的可執行文件。
+    - `--onefile`：將所有文件打包成一個獨立的可執行文件。
+    - `--windowed`：適用於 GUI 應用程式，不會打開控制台窗口。
+    - `--icon=optcg_card.ico`：為生成的可執行文件指定圖標。
+    - `--name=optcg_card`：指定生成的可執行文件名為 `optcg_card.exe`。
+    - `--distpath D:/`：指定生成的可執行文件的輸出路徑為 `D:/`。
+
+這將在 `D:/` 目錄下生成一個名為 `optcg_card.exe` 的可執行文件。
 
 ## 聯繫我們
 
