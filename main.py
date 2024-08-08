@@ -1,4 +1,4 @@
-import os
+from Function.Common.Common import CommonHandle
 from Function.DriverHandle.DriverHandle import DriverHandle
 from Function.DB.DB import SQLiteHandle
 from Function.Download.Download import ImageDownload
@@ -6,7 +6,9 @@ from Function.Log.Log import Logger
 
 
 # 初始化設定
-_script_directory : str = os.path.dirname(os.path.abspath(__file__))
+_common : CommonHandle = CommonHandle()
+_script_directory : str = _common.get_script_directory()
+# 初始化類別
 _driverhandle : DriverHandle  = DriverHandle(_script_directory)
 _dbHandle : SQLiteHandle = SQLiteHandle(_script_directory)
 _download : ImageDownload = ImageDownload(_script_directory)
