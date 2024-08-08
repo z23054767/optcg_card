@@ -1,5 +1,6 @@
 import os
 import requests
+from Function.DB.DB import SQLiteHandle
 from Function.Log.Log import Logger
 
 class ImageDownload:
@@ -17,13 +18,16 @@ class ImageDownload:
         """ 腳本目錄的路徑 """
         self._logger : Logger = Logger(script_directory)
         """ 日誌記錄器 """
+        self._dbHandle : SQLiteHandle = SQLiteHandle(script_directory)
+        """ DB存取類別 """
 
         
-    def download_image(self, img_url: str, series_id: str):
+    def download_image(self, cid: int, img_url: str, series_id: str):
         """
         下載檔案到指定目錄下
 
         Args:
+            cid (int): 圖片所屬卡片的cid (識別碼)
             img_url (str) : 圖片網址
             series_id (str): 系列id
         """
@@ -46,6 +50,8 @@ class ImageDownload:
                 f.write(response.content)
 
             print(f"圖片已保存到 {file_path}")
+            # 將檔案資訊儲存到資料庫
+            self._dbHandle.save_file_info(cid, file_path)
 
         except Exception as err:
             # 記錄錯誤訊息

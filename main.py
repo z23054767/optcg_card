@@ -24,7 +24,7 @@ if __name__ == "__main__":
         all_cards_info = _dbHandle.fetch_card_info_with_series_id()
         # 逐一取出 series_id 並處理
         for card_info in all_cards_info:
-            _download.download_image(card_info["img_src"], card_info["series_name"])
+            _download.download_image(card_info["cid"] , card_info["img_src"], card_info["series_name"])
 
         print("下載全系列卡圖完畢....")
     except Exception as err:

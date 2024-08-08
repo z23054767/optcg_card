@@ -88,19 +88,20 @@ class SQLiteHandle:
             conn = sqlite3.connect(self._dbPath)
             cursor = conn.cursor()
             cursor.execute('''CREATE TABLE IF NOT EXISTS cards_info (
-                                card_id TEXT,
-                                card_name TEXT,
-                                card_species TEXT,
-                                card_type TEXT,
-                                img_src TEXT,
-                                cost INT,
-                                attribute TEXT,
-                                power INT,
-                                counter INT,
-                                color TEXT,
-                                feature TEXT,
-                                effect TEXT,
-                                series_id TEXT)''')
+                            cid INTEGER PRIMARY KEY AUTOINCREMENT,
+                            card_id TEXT,
+                            card_name TEXT,
+                            card_species TEXT,
+                            card_type TEXT,
+                            img_src TEXT,
+                            cost INT,
+                            attribute TEXT,
+                            power INT,
+                            counter INT,
+                            color TEXT,
+                            feature TEXT,
+                            effect TEXT,
+                            series_id TEXT)''')
 
             for card_info in card_series_list:
                 cursor.execute('''INSERT INTO cards_info (card_id, card_name, card_species, card_type, img_src, cost, attribute, power, counter, color, feature, effect, series_id)
@@ -125,7 +126,7 @@ class SQLiteHandle:
             cursor = conn.cursor()
 
             query = '''
-            SELECT ci.img_src, sc.series_name
+            SELECT ci.cid, ci.img_src, sc.series_name
             FROM cards_info ci
             JOIN series_cardlist sc ON ci.series_id = sc.series_id
             '''
@@ -135,8 +136,9 @@ class SQLiteHandle:
 
             for row in rows:
                 card_info = {
-                    "img_src": row[0],
-                    "series_name": row[1]
+                    "cid": row[0],
+                    "img_src": row[1],
+                    "series_name": row[2]
                 }
                 card_info_list.append(card_info)
 
@@ -146,4 +148,31 @@ class SQLiteHandle:
             conn.close()
 
         return card_info_list
+    
+    
+    def save_file_info(self, cid: int, file_path: str):
+        """
+        將檔案資訊儲存到資料庫
+
+        Args:
+            cid (int): 圖片所屬卡片的cid(識別碼)
+            file_path (str): 檔案的實際路徑
+        """
+        try:
+            conn = sqlite3.connect(self._dbPath)
+            cursor = conn.cursor()
+            cursor.execute('''CREATE TABLE IF NOT EXISTS files_info (
+                                cid INTEGER PRIMARY KEY,
+                                file_path TEXT)''')
+
+            cursor.execute('''INSERT INTO files_info (cid, file_path)
+                            VALUES (?, ?)''', 
+                        (cid, file_path))
+
+            conn.commit()
+            
+        except Exception as err:
+            self._logger.log_error_message(f"save_file_info : {err}")
+        finally:
+            conn.close()
        
