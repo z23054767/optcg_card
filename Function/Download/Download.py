@@ -22,18 +22,18 @@ class ImageDownload:
         """ DB存取類別 """
 
         
-    def download_image(self, cid: int, img_url: str, series_id: str):
+    def download_image(self, cid: int, img_url: str, series_name: str):
         """
         下載檔案到指定目錄下
 
         Args:
             cid (int): 圖片所屬卡片的cid (識別碼)
             img_url (str) : 圖片網址
-            series_id (str): 系列id
+            series_name (str): 系列名稱
         """
         try:
             # 如果目錄不存在，創建目錄 
-            dir_path = os.path.join(self._script_directory, 'Image', series_id)
+            dir_path = os.path.join(self._script_directory, 'Image', series_name)
             os.makedirs(dir_path, exist_ok = True)
 
             # 從URL中提取檔名
