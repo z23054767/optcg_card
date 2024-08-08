@@ -24,6 +24,7 @@ class ImageDownload:
         下載檔案到指定目錄下
 
         Args:
+            img_url (str) : 圖片網址
             series_id (str): 系列id
         """
         try:

@@ -52,9 +52,7 @@ optcg_card
 │ ├── DriverHandle/  
 │ │ └── DriverHandle.py  
 │ ├── Log/  
-│ │ └── Log.py  
-│ └── init.py  
-│
+│   └── Log.py  
 ├── .gitignore  
 ├── main.py  
 ├── README.md  
