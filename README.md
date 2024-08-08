@@ -55,6 +55,7 @@ optcg_card
 │   └── Log.py  
 ├── .gitignore  
 ├── main.py  
+├── optcg_card.ico  
 ├── README.md  
 └── requirements.txt  
 
