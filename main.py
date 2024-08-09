@@ -26,6 +26,7 @@ if __name__ == "__main__":
         print("儲存卡片資料至資料庫完畢....")
         # 資料庫正規化
         _dbHandle.normalize_database()
+        print("資料庫正規化完畢")
         # 逐一讀取卡片資料
         all_cards_info = _dbHandle.fetch_card_info_with_series_id()
         print("取出儲存資料")

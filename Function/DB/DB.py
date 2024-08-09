@@ -259,7 +259,7 @@ class SQLiteHandle:
             conn = sqlite3.connect(self._dbPath)
             cursor = conn.cursor()
             cursor.execute('''CREATE TABLE IF NOT EXISTS files_info (
-                                cid INTEGER PRIMARY KEY,
+                                cid INTEGER,
                                 file_path TEXT)''')
 
             cursor.execute('''INSERT INTO files_info (cid, file_path)
