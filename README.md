@@ -51,7 +51,7 @@ optcg_card
 │ │ └── Download.py  
 │ ├── DriverHandle/  
 │ │ └── DriverHandle.py  
-│ └──Log/  
+│ ├── Log/  
 │   └── Log.py  
 ├── .gitignore  
 ├── main.py  

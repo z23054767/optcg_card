@@ -1,4 +1,5 @@
 import os
+import shutil
 import sqlite3
 from Function.Log.Log import Logger
 
@@ -19,17 +20,24 @@ class SQLiteHandle:
         """ 腳本目錄的路徑 """
         self._logger : Logger = Logger(script_directory)
         """ 日誌記錄器 """
-        self.check_dbFolder()
         self._dbPath : str = os.path.join(script_directory, 'DB', 'optcg.db')
         """ db連接資訊 """
 
     def check_dbFolder(self) -> None:
         """
-            db 資料夾不存在時建立該資料夾
+            檢查是否存在 'DB' 資料夾，若存在則刪除後重新建立
         """
-        db_dir = os.path.join(self._script_directory, 'DB')
-        if not os.path.exists(db_dir):
-            os.makedirs(db_dir)
+        try:
+            db_dir = os.path.join(self._script_directory, 'DB')
+            if os.path.exists(db_dir):
+                shutil.rmtree(db_dir)
+                print(f"已刪除資料夾: {db_dir}")
+            
+            os.makedirs(db_dir, exist_ok = True)
+            print(f"已建立資料夾: {db_dir}")
+            
+        except Exception as err:
+            self._logger.log_error_message(f"check_dbFolder : {err}")
 
     def save_cardInfo(self, series_cardlist_datas : dict) -> None:
         """

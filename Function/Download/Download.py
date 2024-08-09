@@ -1,4 +1,5 @@
 import os
+import shutil
 import requests
 from Function.DB.DB import SQLiteHandle
 from Function.Log.Log import Logger
@@ -20,6 +21,24 @@ class ImageDownload:
         """ 日誌記錄器 """
         self._dbHandle : SQLiteHandle = SQLiteHandle(script_directory)
         """ DB存取類別 """
+
+    def check_imageFolder(self):
+        """
+        檢查是否存在 'Image' 資料夾，若存在則刪除後重新建立
+        """
+        try:
+            image_dir = os.path.join(self._script_directory, 'Image')
+            
+            if os.path.exists(image_dir):
+                shutil.rmtree(image_dir)
+                print(f"已刪除目錄: {image_dir}")
+            
+            os.makedirs(image_dir, exist_ok=True)
+            print(f"已建立目錄: {image_dir}")
+
+        except Exception as err:
+            # 記錄錯誤訊息
+            self._logger.log_error_message(f"check_and_delete_image_folder : {err}")
 
     def download_image(self, cid: int, img_url: str, series_name: str):
         """
