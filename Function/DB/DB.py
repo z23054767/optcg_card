@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import sqlite3
 from Function.Log.Log import Logger
@@ -123,6 +124,93 @@ class SQLiteHandle:
         finally:
             conn.close()
 
+    def normalize_database(self) -> None:
+        """
+        正規化資料庫，將卡片資訊正規化並建立不同圖片資訊表
+        """
+        try:
+            conn = sqlite3.connect(self._dbPath)
+            cursor = conn.cursor()
+
+            # 創建新的cards_info資料表並加入新的cid
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS new_cards_info AS
+            SELECT 
+                row_number() OVER (ORDER BY card_id) as cid, 
+                card_id, 
+                card_name, 
+                card_species, 
+                card_type, 
+                cost, 
+                attribute, 
+                power, 
+                counter, 
+                color, 
+                feature, 
+                effect
+            FROM (
+                SELECT 
+                    card_id, 
+                    card_name, 
+                    card_species, 
+                    card_type, 
+                    cost, 
+                    attribute, 
+                    power, 
+                    counter, 
+                    color, 
+                    feature, 
+                    effect,
+                    ROW_NUMBER() OVER (PARTITION BY card_id ORDER BY img_src NOT LIKE '%_p%XX.png') as rn
+                FROM 
+                    cards_info
+            ) as RankedCards
+            WHERE rn = 1;
+            ''')
+
+            # 創建不同圖片表 cards_image_info 並加入cid欄位
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS cards_image_info (
+                cid INTEGER,
+                img_src TEXT,
+                get_info TEXT,
+                series_id TEXT,
+                is_diff INTEGER
+            );
+            ''')
+
+            # 從cards_info中選擇並插入到cards_image_info
+            cursor.execute('SELECT card_id, img_src, get_info, series_id FROM cards_info')
+            rows = cursor.fetchall()
+
+            # 使用正則表達式來判斷is_diff並插入資料到cards_image_info
+            for row in rows:
+                card_id, img_src, get_info, series_id = row
+                is_diff = 1 if re.search(r'_p\d+\.png$', img_src) else 0
+                
+                # 根據 card_id 從新的 cards_info 表中獲取 cid
+                cursor.execute('SELECT cid FROM new_cards_info WHERE card_id = ?', (card_id,))
+                cid = cursor.fetchone()[0]
+                
+                cursor.execute('''
+                INSERT INTO cards_image_info (cid, img_src, get_info, series_id, is_diff)
+                VALUES (?, ?, ?, ?, ?)
+                ''', (cid, img_src, get_info, series_id, is_diff))
+
+            # 刪除原始的cards_info表
+            cursor.execute('DROP TABLE IF EXISTS cards_info;')
+
+            # 將new_cards_info重命名為cards_info
+            cursor.execute('ALTER TABLE new_cards_info RENAME TO cards_info;')
+
+            # 提交變更
+            conn.commit()
+
+        except Exception as err:
+            self._logger.log_error_message(f"normalize_database : {err}")
+        finally:
+            conn.close()
+
     def fetch_card_info_with_series_id(self) -> list:
         """
         取得欲下載的檔案資訊
@@ -134,9 +222,9 @@ class SQLiteHandle:
             cursor = conn.cursor()
 
             query = '''
-            SELECT ci.cid, ci.img_src, sc.series_name
-            FROM cards_info ci
-            JOIN series_cardlist sc ON ci.series_id = sc.series_id
+            SELECT ci.cid, cii.img_src, sc.series_name from cards_image_info cii 
+            INNER JOIN cards_info ci on ci.cid = cii.cid
+            INNER JOIN series_cardlist sc ON cii.series_id = sc.series_id
             '''
 
             cursor.execute(query)

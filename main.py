@@ -24,9 +24,11 @@ if __name__ == "__main__":
         # 將所有的卡片資料存入資料庫
         _driverhandle.handle_all_cardlist()
         print("儲存卡片資料至資料庫完畢....")
+        # 資料庫正規化
+        _dbHandle.normalize_database()
         # 逐一讀取卡片資料
-        print("取出儲存資料")
         all_cards_info = _dbHandle.fetch_card_info_with_series_id()
+        print("取出儲存資料")
         # 逐一取出 series_id 並處理
         for card_info in all_cards_info:
             _download.download_image(card_info["cid"] , card_info["img_src"], card_info["series_name"])
