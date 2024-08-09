@@ -226,6 +226,7 @@ class SQLiteHandle:
             FROM cards_image_info cii 
             INNER JOIN cards_info ci on ci.cid = cii.cid
             INNER JOIN series_cardlist sc ON cii.series_id = sc.series_id
+            ORDER BY sc.series_name, sc.series_id
             '''
 
             cursor.execute(query)
