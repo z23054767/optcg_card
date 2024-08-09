@@ -100,12 +100,13 @@ class SQLiteHandle:
                             color TEXT,
                             feature TEXT,
                             effect TEXT,
+                            get_info TEXT,
                             series_id TEXT)''')
 
             for card_info in card_series_list:
-                cursor.execute('''INSERT INTO cards_info (card_id, card_name, card_species, card_type, img_src, cost, attribute, power, counter, color, feature, effect, series_id)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
-                            (card_info['card_id'], card_info['card_name'], card_info['card_species'], card_info['card_type'], card_info['img_src'], card_info['cost'], card_info['attribute'], card_info['power'], card_info['counter'], card_info['color'], card_info['feature'], card_info['effect'], card_info['series_id']))
+                cursor.execute('''INSERT INTO cards_info (card_id, card_name, card_species, card_type, img_src, cost, attribute, power, counter, color, feature, effect, get_info, series_id)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
+                            (card_info['card_id'], card_info['card_name'], card_info['card_species'], card_info['card_type'], card_info['img_src'], card_info['cost'], card_info['attribute'], card_info['power'], card_info['counter'], card_info['color'], card_info['feature'], card_info['effect'], card_info['get_info'], card_info['series_id']))
 
             conn.commit()
             conn.close()

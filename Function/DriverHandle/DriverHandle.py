@@ -171,21 +171,25 @@ class DriverHandle:
 
                 # 提取反擊值
                 counter_element = back_col.find_element(By.CLASS_NAME, "counter")  
-                counter_value =  driver.execute_script("return arguments[0].childNodes[1].nodeValue;", counter_element).strip()     
+                counter_value = driver.execute_script("return arguments[0].childNodes[1].nodeValue;", counter_element).strip()     
                 counter_value = 0 if not counter_value.isdigit() else int(counter_value)
 
                 # 提取卡片顏色
                 color_element = back_col.find_element(By.CLASS_NAME, "color")  
-                color_value =  driver.execute_script("return arguments[0].childNodes[1].nodeValue;", color_element).strip()
+                color_value = driver.execute_script("return arguments[0].childNodes[1].nodeValue;", color_element).strip()
 
                 # 提取特徵
                 feature = back_col.find_element(By.CLASS_NAME, "feature")
-                feature_value =  driver.execute_script("return arguments[0].childNodes[1].nodeValue;", feature).strip()     
+                feature_value = driver.execute_script("return arguments[0].childNodes[1].nodeValue;", feature).strip()     
 
                 # 提取效果
                 effect = back_col.find_element(By.CLASS_NAME, "text")
-                effect_value =  driver.execute_script("return arguments[0].childNodes[1].nodeValue;", effect).strip()
+                effect_value = driver.execute_script("return arguments[0].childNodes[1].nodeValue;", effect).strip()
                 
+                # 入手方式
+                get_info = back_col.find_element(By.CLASS_NAME, "getInfo")
+                get_info_value = driver.execute_script("return arguments[0].childNodes[1].nodeValue;", get_info).strip()
+
                 card_info = {
                     "card_id" : card_id,
                     "card_name": card_name,
@@ -199,6 +203,7 @@ class DriverHandle:
                     "color": color_value,
                     "feature": feature_value,
                     "effect": effect_value,
+                    "get_info" : get_info_value,
                     "series_id" : series_id
                 }
 
