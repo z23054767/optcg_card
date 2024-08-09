@@ -81,7 +81,7 @@ class DriverHandle:
                 if not option_value:
                     continue
                 
-                option_text = self._common.process_series_name(option_text.split('<br')[0].strip())
+                option_text = self._common.process_series_name(option_text)
                 
                 if option_text and option_value:
                     option_dict[option_text] = option_value
