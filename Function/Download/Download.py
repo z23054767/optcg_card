@@ -21,7 +21,6 @@ class ImageDownload:
         self._dbHandle : SQLiteHandle = SQLiteHandle(script_directory)
         """ DB存取類別 """
 
-        
     def download_image(self, cid: int, img_url: str, series_name: str):
         """
         下載檔案到指定目錄下

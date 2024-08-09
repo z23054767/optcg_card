@@ -54,7 +54,6 @@ class SQLiteHandle:
         finally:
             conn.close()
 
-    
     def load_cardInfo(self) -> dict:
         """
         從資料庫中讀取卡表信息並轉換為字典
@@ -148,7 +147,6 @@ class SQLiteHandle:
             conn.close()
 
         return card_info_list
-    
     
     def save_file_info(self, cid: int, file_path: str):
         """

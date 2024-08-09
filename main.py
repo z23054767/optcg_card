@@ -6,15 +6,14 @@ from Function.Log.Log import Logger
 
 
 # 初始化設定
-_common : CommonHandle = CommonHandle()
-_script_directory : str = _common.get_script_directory()
+_common: CommonHandle = CommonHandle()
+_script_directory: str = _common.get_script_directory(__file__)
+
 # 初始化類別
 _driverhandle : DriverHandle  = DriverHandle(_script_directory)
 _dbHandle : SQLiteHandle = SQLiteHandle(_script_directory)
 _download : ImageDownload = ImageDownload(_script_directory)
 _logger : Logger = Logger(_script_directory)
-
-
 
 if __name__ == "__main__":
     try:
