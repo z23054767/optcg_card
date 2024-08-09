@@ -222,7 +222,8 @@ class SQLiteHandle:
             cursor = conn.cursor()
 
             query = '''
-            SELECT ci.cid, cii.img_src, sc.series_name from cards_image_info cii 
+            SELECT ci.cid, cii.img_src, sc.series_name 
+            FROM cards_image_info cii 
             INNER JOIN cards_info ci on ci.cid = cii.cid
             INNER JOIN series_cardlist sc ON cii.series_id = sc.series_id
             '''
