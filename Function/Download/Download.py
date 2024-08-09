@@ -31,10 +31,10 @@ class ImageDownload:
             
             if os.path.exists(image_dir):
                 shutil.rmtree(image_dir)
-                print(f"已刪除目錄: {image_dir}")
+                print(f"已刪除資料夾: {image_dir}")
             
             os.makedirs(image_dir, exist_ok=True)
-            print(f"已建立目錄: {image_dir}")
+            print(f"已建立資料夾: {image_dir}")
 
         except Exception as err:
             # 記錄錯誤訊息
