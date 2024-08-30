@@ -40,10 +40,13 @@ class DriverHandle:
         close_button.find_element(By.TAG_NAME, 'button').click()
         print("稍後5秒")
         time.sleep(5)
-
-    def get_cardlist(self) -> None:
+    
+    def get_cardlist(self, language_url) -> None:
         """
             取得系列列表
+        
+            Args:
+            language_url (str): 用戶選擇的語言對應的網址
         """
         options = webdriver.ChromeOptions()
         options.add_argument("start-maximized")
@@ -61,8 +64,7 @@ class DriverHandle:
         driver = webdriver.Chrome(options = options)
 
         try:
-            url = 'https://asia-tw.onepiece-cardgame.com/cardlist'
-            driver.get(url)
+            driver.get(f"{language_url}/cardlist")
 
             self.cookie_suggestion_close(driver)
             
@@ -93,12 +95,18 @@ class DriverHandle:
         finally:
             driver.quit()
 
-    def handle_series_cardlist(self, series_id) -> None:
+    def handle_series_cardlist(self, series_id: str, language_url: str) -> None:
         """
-        處理系列卡表
+        根據指定的系列 ID 和語言 URL 處理該系列的卡表信息。
+
+        該方法使用給定的系列 ID 和對應語言的 URL 來獲取或處理特定系列的卡表數據。包括從網頁抓取數據、解析網頁內容等操作。
 
         Args:
-            series_id (str): 系列id
+            series_id (str): 系列的 ID。
+            language_url (str): 用戶選擇的語言對應的卡表網頁 URL。
+
+        Returns:
+            None: 該方法不返回任何值，僅進行數據處理操作。
         """
         options = webdriver.ChromeOptions()
         options.add_argument("start-maximized")
@@ -117,7 +125,7 @@ class DriverHandle:
 
         try:
             card_list = []
-            url = f'https://asia-tw.onepiece-cardgame.com/cardlist/?series={series_id}'
+            url = f'{language_url}/cardlist/?series={series_id}'
             driver.get(url)
             print("稍後5秒")
             time.sleep(5)
@@ -139,7 +147,7 @@ class DriverHandle:
                         img_src = img_src.split('?')[0]
 
                     # 替換 路徑
-                    img_src = img_src.replace("../images/", "https://asia-tw.onepiece-cardgame.com/images/")
+                    img_src = img_src.replace("../images/", f"{language_url}/images/")
                 
                 # 撈取 infoCol 欄位值
                 info_col = WebDriverWait(modal_col, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "infoCol")))
@@ -218,18 +226,21 @@ class DriverHandle:
         finally:
             driver.quit()
 
-    def handle_all_cardlist(self) -> None:
+    def handle_all_cardlist(self, language_url) -> None:
         """
         處理全系列卡表，儲存資訊至資料庫
+
+        Args:
+            language_url (str): 用戶選擇的語言對應的網址
         """
         try:
             # 取得 卡片系列列表相關資訊
-            self.get_cardlist()
+            self.get_cardlist(language_url)
             # 取出 卡片系列列表
             all_card_list_infos = self._dbHandle.load_cardInfo()
             # 逐一取出 product_id 並處理
             for product_name, product_id in all_card_list_infos.items():
-                self.handle_series_cardlist(product_id)
+                self.handle_series_cardlist(product_id, language_url)
                 print(f"{product_name} 已處理完畢，並存入資料庫")
         except Exception as err:
             self._logger.log_error_message(f"handle_all_cardlist : {err}")

@@ -21,8 +21,10 @@ _logger : Logger = Logger(_script_directory)
 
 if __name__ == "__main__":
     try:
+        # 選擇網站語言(Y:日文 N:中文)
+        language_url = _common.get_user_choice_language_url()
         # 將所有的卡片資料存入資料庫
-        _driverhandle.handle_all_cardlist()
+        _driverhandle.handle_all_cardlist(language_url)
         print("儲存卡片資料至資料庫完畢....")
         # 資料庫正規化
         _dbHandle.normalize_database()
