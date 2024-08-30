@@ -139,7 +139,6 @@ class SQLiteHandle:
                 row_number() OVER (ORDER BY card_id) as cid, 
                 card_id, 
                 card_name, 
-                card_species, 
                 card_type, 
                 cost, 
                 attribute, 
@@ -152,7 +151,6 @@ class SQLiteHandle:
                 SELECT 
                     card_id, 
                     card_name, 
-                    card_species, 
                     card_type, 
                     cost, 
                     attribute, 
@@ -173,6 +171,7 @@ class SQLiteHandle:
             CREATE TABLE IF NOT EXISTS cards_image_info (
                 cid INTEGER,
                 img_src TEXT,
+                card_species TEXT,
                 get_info TEXT,
                 series_id TEXT,
                 is_diff INTEGER
@@ -180,12 +179,12 @@ class SQLiteHandle:
             ''')
 
             # 從cards_info中選擇並插入到cards_image_info
-            cursor.execute('SELECT card_id, img_src, get_info, series_id FROM cards_info')
+            cursor.execute('SELECT card_id, img_src, card_species, get_info, series_id FROM cards_info')
             rows = cursor.fetchall()
 
             # 使用正則表達式來判斷is_diff並插入資料到cards_image_info
             for row in rows:
-                card_id, img_src, get_info, series_id = row
+                card_id, img_src, card_species, get_info, series_id = row
                 is_diff = 1 if re.search(r'_p\d+\.png$', img_src) else 0
                 
                 # 根據 card_id 從新的 cards_info 表中獲取 cid
@@ -193,9 +192,9 @@ class SQLiteHandle:
                 cid = cursor.fetchone()[0]
                 
                 cursor.execute('''
-                INSERT INTO cards_image_info (cid, img_src, get_info, series_id, is_diff)
-                VALUES (?, ?, ?, ?, ?)
-                ''', (cid, img_src, get_info, series_id, is_diff))
+                INSERT INTO cards_image_info (cid, img_src, card_species, get_info, series_id, is_diff)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ''', (cid, img_src, card_species, get_info, series_id, is_diff))
 
             # 刪除原始的cards_info表
             cursor.execute('DROP TABLE IF EXISTS cards_info;')
@@ -271,5 +270,4 @@ class SQLiteHandle:
         except Exception as err:
             self._logger.log_error_message(f"save_file_info : {err}")
         finally:
-            conn.close()
-       
+            conn.close()    
