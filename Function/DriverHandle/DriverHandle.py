@@ -192,7 +192,15 @@ class DriverHandle:
 
                 # 提取效果
                 effect = back_col.find_element(By.CLASS_NAME, "text")
-                effect_value = driver.execute_script("return arguments[0].childNodes[1].nodeValue;", effect).strip()
+                effect_value = driver.execute_script("""
+                let element = arguments[0];
+                let htmlContent = element.innerHTML;
+                // 去掉 <h3> 標籤及其内容
+                htmlContent = htmlContent.replace(/<h3[^>]*>.*?<\\/h3>/gi, '');
+                // 將 <br> 標籤替換為空格
+                htmlContent = htmlContent.replace(/<br\\s*\\/?>/gi, ' ');
+                return htmlContent.trim();
+                """, effect).strip()
                 
                 # 入手方式
                 get_info = back_col.find_element(By.CLASS_NAME, "getInfo")
