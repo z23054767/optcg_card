@@ -1,8 +1,8 @@
-*
-!.gitignore
-!*.py
-!requirements.txt
-!Function/
-!Function/*/
-!Function/**/*.py
-!optcg_card.ico
+.vscode
+.pylintrc
+__pycache__
+venv
+optcg_card.ico
+image/*
+storage/*
+log/*
