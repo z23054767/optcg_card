@@ -26,20 +26,25 @@ if __name__ == "__main__":
     try:
         # 選擇網站語言(Y:日文 N:中文)
         LANGUAGE_URL = _common.get_user_choice_language_url()
+        _log.log_info_message("Selected language URL: " + LANGUAGE_URL)
         # 將所有的卡片資料存入資料庫
         _crawler.handle_all_card_list(LANGUAGE_URL)
+        _log.log_info_message("儲存卡片資料至資料庫完畢....")
         print("儲存卡片資料至資料庫完畢....")
         # 資料庫正規化
         _database.normalize_database()
+        _log.log_info_message("資料庫正規化完畢")
         print("資料庫正規化完畢")
         # 逐一讀取卡片資料
         all_cards_info = _database.fetch_card_info_with_series_id()
+        _log.log_info_message("取出儲存資料")
         print("取出儲存資料")
         # 逐一取出 series_id 並處理
         for card_info in all_cards_info:
             _download.download_image(
                 card_info["cid"], card_info["img_src"], card_info["series_name"]
             )
+        _log.log_info_message("下載全系列卡圖完畢....")
         print("下載全系列卡圖完畢....")
     except sqlite3.DatabaseError as err:
         _log.log_error_message(f"Database error: {err}")

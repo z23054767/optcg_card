@@ -24,7 +24,25 @@ class Log:
         Args:
         message (str): 錯誤訊息
         """
+        self.log_message("ERROR", message)
 
+    def log_info_message(self, message: str) -> None:
+        """
+        寫入信息訊息至指定路徑
+
+        Args:
+        message (str): 信息訊息
+        """
+        self.log_message("INFO", message)
+
+    def log_message(self, level: str, message: str) -> None:
+        """
+        寫入訊息至指定路徑
+
+        Args:
+        level (str): 訊息等級
+        message (str): 訊息內容
+        """
         # 創建LOG文件夾（如果不存在）
         log_folder = os.path.join(self._script_directory, "log")
         os.makedirs(log_folder, exist_ok=True)
@@ -33,6 +51,6 @@ class Log:
         # 設置日誌文件名
         log_file = os.path.join(log_folder, f"{current_date}.txt")
         current_time = datetime.now().strftime("%H:%M:%S")
-        log_message = f"[{current_time}] : {message}\n"
+        log_message = f"[{current_time}] [{level}] : {message}\n"
         with open(log_file, "a", encoding="utf-8") as log:
             log.write(log_message)
