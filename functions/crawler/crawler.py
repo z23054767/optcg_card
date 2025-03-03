@@ -25,6 +25,14 @@ class Crawler:
         """ DB存取類別 """
         self._common: Common = Common()
         """ 通用方法類別 """
+        self.child_first_node_value_script = (
+            "return arguments[0].childNodes[0].nodeValue;"
+        )
+        """ 取得第一個子節點的值 """
+        self.child_second_node_value_script = (
+            "return arguments[0].childNodes[1].nodeValue;"
+        )
+        """ 取得第二個子節點的值 """
 
     @Common.exception_handler
     def cookie_suggestion_close(self, driver) -> None:
@@ -147,7 +155,7 @@ class Crawler:
         """
         cost_element = back_col.find_element(By.CLASS_NAME, "cost")
         cost_value = self.get_element_text(
-            driver, cost_element, "return arguments[0].childNodes[1].nodeValue;"
+            driver, cost_element, self.child_second_node_value_script
         )
         return 0 if not cost_value.isdigit() else int(cost_value)
 
@@ -183,7 +191,7 @@ class Crawler:
         """
         power_element = back_col.find_element(By.CLASS_NAME, "power")
         power_value = self.get_element_text(
-            driver, power_element, "return arguments[0].childNodes[1].nodeValue;"
+            driver, power_element, self.child_second_node_value_script
         )
         return 0 if not power_value.isdigit() else int(power_value)
 
@@ -201,7 +209,7 @@ class Crawler:
         """
         counter_element = back_col.find_element(By.CLASS_NAME, "counter")
         counter_value = self.get_element_text(
-            driver, counter_element, "return arguments[0].childNodes[1].nodeValue;"
+            driver, counter_element, self.child_second_node_value_script
         )
         return 0 if not counter_value.isdigit() else int(counter_value)
 
@@ -219,7 +227,7 @@ class Crawler:
         """
         color_element = back_col.find_element(By.CLASS_NAME, "color")
         return self.get_element_text(
-            driver, color_element, "return arguments[0].childNodes[1].nodeValue;"
+            driver, color_element, self.child_second_node_value_script
         )
 
     @Common.exception_handler
@@ -236,7 +244,7 @@ class Crawler:
         """
         feature = back_col.find_element(By.CLASS_NAME, "feature")
         return self.get_element_text(
-            driver, feature, "return arguments[0].childNodes[1].nodeValue;"
+            driver, feature, self.child_second_node_value_script
         )
 
     @Common.exception_handler
@@ -277,7 +285,7 @@ class Crawler:
         """
         get_info = back_col.find_element(By.CLASS_NAME, "getInfo")
         return self.get_element_text(
-            driver, get_info, "return arguments[0].childNodes[1].nodeValue;"
+            driver, get_info, self.child_second_node_value_script
         )
 
     @Common.exception_handler
@@ -359,23 +367,17 @@ class Crawler:
         )
         spans = info_col.find_elements(By.TAG_NAME, "span")
         card_id = (
-            driver.execute_script(
-                "return arguments[0].childNodes[0].nodeValue;", spans[0]
-            ).strip()
+            driver.execute_script(self.child_first_node_value_script, spans[0]).strip()
             if len(spans) > 0
             else ""
         )
         card_species = (
-            driver.execute_script(
-                "return arguments[0].childNodes[0].nodeValue;", spans[1]
-            ).strip()
+            driver.execute_script(self.child_first_node_value_script, spans[1]).strip()
             if len(spans) > 1
             else ""
         )
         card_type = (
-            driver.execute_script(
-                "return arguments[0].childNodes[0].nodeValue;", spans[2]
-            ).strip()
+            driver.execute_script(self.child_first_node_value_script, spans[2]).strip()
             if len(spans) > 2
             else ""
         )

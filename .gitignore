@@ -6,3 +6,6 @@ optcg_card.ico
 image/*
 storage/*
 log/*
+sonar-project.properties
+.sonar_lock
+report-task.txt
