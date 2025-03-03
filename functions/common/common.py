@@ -66,7 +66,7 @@ class Common:
         Returns:
             str: 返回用戶選擇的語言對應的網址。
         """
-        with open('json/language_url.json', 'r', encoding='utf-8') as file:
+        with open("json/language_url.json", "r", encoding="utf-8") as file:
             language_urls = json.load(file)
 
         language_prompt = (
@@ -84,7 +84,7 @@ class Common:
 
         while True:
             choice = input(language_prompt).strip().lower()
-            if choice == 'exit':
+            if choice == "exit":
                 print("程式結束....")
                 sys.exit()
             elif choice in language_urls:

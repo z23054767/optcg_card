@@ -146,7 +146,9 @@ class Crawler:
             int: 卡片成本值
         """
         cost_element = back_col.find_element(By.CLASS_NAME, "cost")
-        cost_value = self.get_element_text(driver, cost_element, "return arguments[0].childNodes[1].nodeValue;")
+        cost_value = self.get_element_text(
+            driver, cost_element, "return arguments[0].childNodes[1].nodeValue;"
+        )
         return 0 if not cost_value.isdigit() else int(cost_value)
 
     @Common.exception_handler
@@ -180,7 +182,9 @@ class Crawler:
             int: 卡片力量值
         """
         power_element = back_col.find_element(By.CLASS_NAME, "power")
-        power_value = self.get_element_text(driver, power_element, "return arguments[0].childNodes[1].nodeValue;")
+        power_value = self.get_element_text(
+            driver, power_element, "return arguments[0].childNodes[1].nodeValue;"
+        )
         return 0 if not power_value.isdigit() else int(power_value)
 
     @Common.exception_handler
@@ -196,7 +200,9 @@ class Crawler:
             int: 卡片反擊值
         """
         counter_element = back_col.find_element(By.CLASS_NAME, "counter")
-        counter_value = self.get_element_text(driver, counter_element, "return arguments[0].childNodes[1].nodeValue;")
+        counter_value = self.get_element_text(
+            driver, counter_element, "return arguments[0].childNodes[1].nodeValue;"
+        )
         return 0 if not counter_value.isdigit() else int(counter_value)
 
     @Common.exception_handler
@@ -212,7 +218,9 @@ class Crawler:
             str: 卡片顏色值
         """
         color_element = back_col.find_element(By.CLASS_NAME, "color")
-        return self.get_element_text(driver, color_element, "return arguments[0].childNodes[1].nodeValue;")
+        return self.get_element_text(
+            driver, color_element, "return arguments[0].childNodes[1].nodeValue;"
+        )
 
     @Common.exception_handler
     def get_feature_value(self, driver, back_col) -> str:
@@ -227,7 +235,9 @@ class Crawler:
             str: 卡片特徵值
         """
         feature = back_col.find_element(By.CLASS_NAME, "feature")
-        return self.get_element_text(driver, feature, "return arguments[0].childNodes[1].nodeValue;")
+        return self.get_element_text(
+            driver, feature, "return arguments[0].childNodes[1].nodeValue;"
+        )
 
     @Common.exception_handler
     def get_effect_value(self, driver, back_col) -> str:
@@ -266,7 +276,9 @@ class Crawler:
             str: 卡片信息值
         """
         get_info = back_col.find_element(By.CLASS_NAME, "getInfo")
-        return self.get_element_text(driver, get_info, "return arguments[0].childNodes[1].nodeValue;")
+        return self.get_element_text(
+            driver, get_info, "return arguments[0].childNodes[1].nodeValue;"
+        )
 
     @Common.exception_handler
     def extract_card_attributes(self, driver, back_col) -> dict:
@@ -371,12 +383,14 @@ class Crawler:
         back_col = modal_col.find_element(By.CLASS_NAME, "backCol")
         card_attributes = self.extract_card_attributes(driver, back_col)
 
-        card_info.update({
-            "card_id": card_id,
-            "card_species": card_species,
-            "card_type": card_type,
-            "series_id": series_id,
-        })
+        card_info.update(
+            {
+                "card_id": card_id,
+                "card_species": card_species,
+                "card_type": card_type,
+                "series_id": series_id,
+            }
+        )
         card_info.update(card_attributes)
 
         return card_info
@@ -391,7 +405,7 @@ class Crawler:
             language_url (str): 用戶選擇的語言對應的網址
         """
         options = self.setup_driver_options()
-        driver = webdriver.Chrome(options = options)
+        driver = webdriver.Chrome(options=options)
 
         try:
             card_list = []
@@ -407,7 +421,9 @@ class Crawler:
             )
             modal_cols = result_col.find_elements(By.CLASS_NAME, "modalCol")
             for modal_col in modal_cols:
-                card_info = self.process_card_info(driver, modal_col, language_url, series_id)
+                card_info = self.process_card_info(
+                    driver, modal_col, language_url, series_id
+                )
                 card_list.append(card_info)
 
             self._database.save_series_database(card_list)
