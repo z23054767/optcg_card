@@ -69,21 +69,8 @@ class Common:
         with open("json/language_url.json", "r", encoding="utf-8") as file:
             language_urls = json.load(file)
 
-        language_prompt = (
-            "請輸入語言代碼：\n"
-            "日本語(請輸入：ja)\n"
-            "简体中文(請輸入：cn)\n"
-            "繁體中文(HK)(請輸入：hk)\n"
-            "繁體中文(TW)(請輸入：tw)\n"
-            "ไทย(請輸入：th)\n"
-            "English(Asia)(請輸入：asia-en)\n"
-            "English(US/Europe/LatAm/Oceania)(請輸入：en)\n"
-            "Français(請輸入：fr)\n"
-            "離開(請輸入：exit)\n"
-        )
-
         while True:
-            choice = input(language_prompt).strip().lower()
+            choice = "ja"
             if choice == "exit":
                 print("程式結束....")
                 sys.exit()
