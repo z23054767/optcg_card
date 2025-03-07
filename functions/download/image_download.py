@@ -27,9 +27,9 @@ class Download:
     @Common.exception_handler
     def check_image_folder(self):
         """
-        檢查是否存在 'Image' 資料夾，若存在則刪除後重新建立
+        檢查是否存在 'image' 資料夾，若存在則刪除後重新建立
         """
-        image_dir = os.path.join(self._script_directory, "Image")
+        image_dir = os.path.join(self._script_directory, "image")
 
         if os.path.exists(image_dir):
             shutil.rmtree(image_dir)
@@ -49,7 +49,7 @@ class Download:
             series_name (str): 系列名稱
         """
         # 如果目錄不存在，創建目錄
-        dir_path = os.path.join(self._script_directory, "Image", series_name)
+        dir_path = os.path.join(self._script_directory, "image", series_name)
         os.makedirs(dir_path, exist_ok=True)
 
         # 從URL中提取檔名

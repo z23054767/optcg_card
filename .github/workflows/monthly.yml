@@ -1,0 +1,45 @@
+name: Run Python Script Monthly
+
+on:
+  schedule:
+    - cron: "0 0 1 * *"
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: schedule
+
+      - name: Set Up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          sudo apt update
+          sudo apt install -y wget curl unzip
+
+      - name: Run Script
+        run: python main.py
+
+      - name: Archive Images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-images
+          path: image/**
+
+      - name: Archive Storage DB
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storage-databases
+          path: storage/*.db

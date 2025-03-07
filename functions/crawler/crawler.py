@@ -1,9 +1,12 @@
 import time
 
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from webdriver_manager.chrome import ChromeDriverManager
 
 from functions.common.common import Common
 from functions.database.database import Database
@@ -35,22 +38,6 @@ class Crawler:
         """ 取得第二個子節點的值 """
 
     @Common.exception_handler
-    def cookie_suggestion_close(self, driver) -> None:
-        """
-        關閉 cookie 設定頁面
-
-        Args:
-            driver (webdriver): 爬蟲driver
-        """
-        wait = WebDriverWait(driver, 10)
-        close_button = wait.until(
-            EC.element_to_be_clickable((By.ID, "onetrust-close-btn-container"))
-        )
-        close_button.find_element(By.TAG_NAME, "button").click()
-        print("稍後5秒")
-        time.sleep(5)
-
-    @Common.exception_handler
     def get_card_list(self, language_url) -> None:
         """
         取得系列列表
@@ -59,12 +46,12 @@ class Crawler:
         language_url (str): 用戶選擇的語言對應的網址
         """
         options = self.setup_driver_options()
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=options
+        )
 
         try:
             driver.get(f"{language_url}/cardlist")
-
-            self.cookie_suggestion_close(driver)
 
             wait = WebDriverWait(driver, 10)
             series_col = wait.until(
@@ -321,14 +308,14 @@ class Crawler:
         }
 
     @Common.exception_handler
-    def setup_driver_options(self) -> webdriver.ChromeOptions:
+    def setup_driver_options(self) -> Options:
         """
         設置 WebDriver 選項
 
         Returns:
-            webdriver.ChromeOptions: 設置好的 WebDriver 選項
+            Options: 設置好的 WebDriver 選項
         """
-        options = webdriver.ChromeOptions()
+        options = Options()
         options.add_argument("start-maximized")
         options.add_argument("disable-infobars")
         options.add_argument("--disable-extensions")
@@ -407,7 +394,9 @@ class Crawler:
             language_url (str): 用戶選擇的語言對應的網址
         """
         options = self.setup_driver_options()
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=options
+        )
 
         try:
             card_list = []
@@ -415,8 +404,6 @@ class Crawler:
             driver.get(url)
             print("稍後5秒")
             time.sleep(5)
-
-            self.cookie_suggestion_close(driver)
 
             result_col = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.CLASS_NAME, "resultCol"))
