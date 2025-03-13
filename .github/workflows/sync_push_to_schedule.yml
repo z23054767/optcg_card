@@ -1,0 +1,79 @@
+name: Sync main to schedule
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-main-to-schedule:
+    runs-on: ubuntu-latest
+    env:
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      BRANCH_NAME: sync-main-to-schedule-${{ github.run_id }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Create or checkout the branch
+        run: |
+          if git show-ref --verify --quiet refs/heads/$BRANCH_NAME; then
+            git checkout $BRANCH_NAME
+          else
+            git checkout -b $BRANCH_NAME origin/schedule
+            git push origin $BRANCH_NAME
+          fi
+
+      - name: Merge main into schedule
+        run: |
+          git checkout main
+          git pull origin main
+          git checkout $BRANCH_NAME
+          git merge --no-commit main
+
+          # Check for changes excluding functions/common/common.py
+          if git diff --quiet -- . ':(exclude)functions/common/common.py'; then
+            echo "No relevant changes detected, skipping PR creation."
+            exit 0
+          fi
+
+          git add --all
+          git commit -m "🤖 Sync changes from main to schedule"
+          git push origin $BRANCH_NAME
+
+      - name: Create a Pull Request
+        id: create_pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          base: schedule
+          branch: ${{ env.BRANCH_NAME }}
+          title: "🤖 Sync main to schedule"
+          body: "Automated PR to sync changes from main to schedule."
+          labels: automated
+          draft: false
+
+      - name: Auto-merge PR
+        if: success()
+        run: |
+          PR_NUMBER=$(gh pr list --repo ${{ github.repository }} --state open --head "${{ env.BRANCH_NAME }}" --json number --jq '.[0].number')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR found, exiting."
+            exit 0
+          fi
+          gh pr merge $PR_NUMBER --auto --squash --repo ${{ github.repository }}
