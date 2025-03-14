@@ -1,0 +1,129 @@
+name: Sync main to schedule
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-main-to-schedule:
+    runs-on: ubuntu-latest
+    env:
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      BRANCH_NAME: sync-main-to-schedule-${{ github.run_id }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch all branches
+        run: git fetch --prune --all
+
+      - name: Check if schedule branch exists
+        id: check_schedule
+        run: |
+          if git ls-remote --exit-code --heads origin schedule; then
+            echo "SCHEDULE_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "SCHEDULE_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create or checkout the branch
+        run: |
+          if [ "${{ env.SCHEDULE_EXISTS }}" = "true" ]; then
+            git checkout -b $BRANCH_NAME origin/schedule
+          else
+            git checkout -b $BRANCH_NAME
+          fi
+
+      - name: Merge main into temporary branch
+        run: |
+          git checkout main
+          git pull origin main
+          git checkout $BRANCH_NAME
+          git merge --no-commit main
+
+          # Check for changes excluding functions/common/common.py
+          if git diff --quiet -- . ':(exclude)functions/common/common.py'; then
+            echo "No relevant changes detected, skipping PR creation."
+            exit 0
+          fi
+
+          git add --all
+          git commit -m "🤖 Sync changes from main to schedule"
+
+      - name: Push the new branch
+        run: |
+          echo "🚀 Attempting to push branch $BRANCH_NAME..."
+          git push --set-upstream origin $BRANCH_NAME || (echo "❌ Push failed! Debugging..." && git status && exit 1)
+
+      - name: Fetch updated remote branches
+        run: git fetch --prune --all
+
+      - name: Validate remote branch existence
+        run: |
+          if ! git ls-remote --exit-code --heads origin $BRANCH_NAME; then
+            echo "❌ Branch $BRANCH_NAME does not exist remotely after push! Debugging..."
+            git branch -a
+            exit 1
+          fi
+
+      - name: Create a Pull Request
+        id: create_pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          base: schedule
+          branch: ${{ env.BRANCH_NAME }}
+          title: "🤖 Sync main to schedule"
+          body: "Automated PR to sync changes from main to schedule."
+          labels: automated
+          draft: false
+
+      - name: Store PR Number
+        run: |
+          echo "PR_NUMBER=${{ steps.create_pr.outputs.pull-request-number }}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Debug PR Number
+        run: "echo 'Pull Request Number: ${{ env.PR_NUMBER }}'"
+        env:
+          PR_NUMBER: "${{ env.PR_NUMBER }}"
+
+      - name: Auto-merge PR
+        run: |
+          if [ -z "$PR_NUMBER" ]; then
+            echo "❌ No PR number found, skipping merge."
+            exit 0
+          fi
+
+          echo "🚀 Merging PR #$PR_NUMBER..."
+          gh pr merge "$PR_NUMBER" --auto --squash --repo ${{ github.repository }}
+        env:
+          PR_NUMBER: ${{ env.PR_NUMBER }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+      - name: Push merged changes to schedule
+        run: |
+          git checkout schedule
+          git pull origin schedule
+          git merge --no-ff $BRANCH_NAME
+
+          echo "🚀 Attempting to push merged changes..."
+          if ! git push origin schedule; then
+            echo "❌ Git push failed! Checking logs..."
+            git status
+            git log -5 --oneline
+            exit 1
+          fi
