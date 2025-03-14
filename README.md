@@ -39,26 +39,6 @@
     ```
 2. 根據提示輸入需要抓取的卡片網站地址及相關參數，程序將自動進行抓取並保存資料。
 
-## 文件結構
-optcg_card  
-│  
-├── Function/  
-│ ├── Common/  
-│ │ └── Common.py  
-│ ├── DB/  
-│ │ └── DB.py  
-│ ├── Download/  
-│ │ └── Download.py  
-│ ├── DriverHandle/  
-│ │ └── DriverHandle.py  
-│ ├── Log/  
-│   └── Log.py  
-├── .gitignore  
-├── main.py  
-├── optcg_card.ico  
-├── README.md  
-└── requirements.txt  
-
 ## 打包為可執行文件
 
 您可以使用 `PyInstaller` 將此項目打包為一個可在任何環境下運行的可執行文件。
