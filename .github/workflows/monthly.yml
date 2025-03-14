@@ -36,6 +36,7 @@ jobs:
         with:
           name: generated-images
           path: image/**
+          retention-days: 31
 
       - name: Archive Storage DB
         if: always()
@@ -43,3 +44,4 @@ jobs:
         with:
           name: storage-databases
           path: storage/*.db
+          retention-days: 31
